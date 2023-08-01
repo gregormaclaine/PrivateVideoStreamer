@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Private Video Streamer</title>
+
+    <script src="./lib/ass.min.js" type="module"></script>
+
+    <style>
+      .video-wrapper {
+        margin: 2em auto;
+      }
+
+      #videoPlayer {
+        width: 96vw;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <!-- Select input -->
+      <select id="videoSelect">
+        <option value="">Select an option</option>
+        {{VIDEO_OPTIONS}}
+      </select>
+
+      <!-- Video component -->
+      <div class="video-wrapper">
+        <video id="videoPlayer" controls style="display: none">
+          <!-- Optionally, you can add fallback content for browsers that don't support the video element -->
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const videoSelect = document.getElementById('videoSelect');
+        const videoPlayer = document.getElementById('videoPlayer');
+        let current_ass = null;
+
+        // Handle select input change
+        videoSelect.addEventListener('change', function (event) {
+          const selectedOption = event.target.value;
+          if (selectedOption) {
+            if (current_ass) current_ass.destroy();
+            // Show the video player and set the video source
+            videoPlayer.style.display = 'block';
+            videoPlayer.src = './video/' + selectedOption;
+
+            fetch('./subtitles/' + selectedOption)
+              .then(res => res.text())
+              .then(text => {
+                current_ass = new ASS(text, videoPlayer);
+              });
+          } else {
+            if (current_ass) current_ass.destroy();
+            // Hide the video player if no option is selected
+            videoPlayer.style.display = 'none';
+            videoPlayer.src = '';
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
