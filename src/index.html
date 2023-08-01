@@ -15,6 +15,11 @@
       #videoPlayer {
         width: 96vw;
       }
+
+      .ASS-container,
+      .ASS-stage {
+        overflow: unset !important;
+      }
     </style>
   </head>
   <body>
@@ -53,6 +58,7 @@
               .then(res => res.text())
               .then(text => {
                 current_ass = new ASS(text, videoPlayer);
+                current_ass.resize();
               });
           } else {
             if (current_ass) current_ass.destroy();
